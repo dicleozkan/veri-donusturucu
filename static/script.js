@@ -10,6 +10,7 @@ const BACKEND_URL = window.location.hostname === 'localhost' || window.location.
 
 // Debug için backend URL'ini konsola yazdır
 console.log('Backend URL:', BACKEND_URL);
+console.log('Current hostname:', window.location.hostname);
 
 // DOM elementleri
 const uploadArea = document.getElementById('uploadArea');

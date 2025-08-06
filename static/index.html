@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resim İşleme Uygulaması</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -232,14 +232,9 @@
     </div>
 
     <script>
-        // Netlify environment variables'ı window objesine ekle
-        window.BACKEND_URL = '%%BACKEND_URL%%';
-        
-        // Fallback için
-        if (!window.BACKEND_URL || window.BACKEND_URL === '%%BACKEND_URL%%') {
-            window.BACKEND_URL = 'https://resim-isleme-api.onrender.com';
-        }
+        // Backend URL'i doğrudan tanımla
+        window.BACKEND_URL = 'https://resim-isleme-api.onrender.com';
     </script>
-    <script src="/static/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html> 
