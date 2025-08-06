@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video İşleme - Veri Dönüştürücü</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Ana Sayfa
+                </a>
+                <h1><i class="fas fa-video"></i> Video İşleme</h1>
+                <p>Videolarınızdan belirli zaman aralıklarında görüntüler çıkarın</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Dosya Yükleme Bölümü -->
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Video Seçin</h3>
+                        <p>Videoyu buraya sürükleyin veya tıklayarak seçin</p>
+                        <p class="file-types">Desteklenen formatlar: MP4, AVI, MOV, MKV, WMV</p>
+                        <input type="file" id="fileInput" accept="video/*" hidden>
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open"></i> Dosya Seç
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seçilen Video Önizleme -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <h3><i class="fas fa-eye"></i> Seçilen Video</h3>
+                <div class="preview-container">
+                    <video id="previewVideo" controls>
+                        <source id="videoSource" src="" type="video/mp4">
+                        Tarayıcınız video oynatmayı desteklemiyor.
+                    </video>
+                    <div class="video-info">
+                        <p id="videoInfo"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video İşleme Seçenekleri -->
+            <section class="processing-section" id="processingSection" style="display: none;">
+                <h3><i class="fas fa-cogs"></i> Video İşleme Seçenekleri</h3>
+                
+                <div class="options-grid">
+                    <!-- Zaman Aralığı Seçimi -->
+                    <div class="option-card">
+                        <div class="option-header">
+                            <input type="checkbox" id="time_enabled" checked>
+                            <h4><i class="fas fa-clock"></i> Zaman Aralığı</h4>
+                        </div>
+                        <p>Video'dan hangi zaman aralığında frame'ler çıkarılacak</p>
+                        <div class="option-details">
+                            <div class="time-controls">
+                                <div class="time-input-group">
+                                    <label>
+                                        <i class="fas fa-play"></i> Başlangıç:
+                                    </label>
+                                    <div class="time-inputs">
+                                        <input type="number" id="startMinutes" placeholder="Dakika" min="0" value="0">
+                                        <span>:</span>
+                                        <input type="number" id="startSeconds" placeholder="Saniye" min="0" max="59" value="0">
+                                    </div>
+                                </div>
+                                <div class="time-input-group">
+                                    <label>
+                                        <i class="fas fa-stop"></i> Bitiş:
+                                    </label>
+                                    <div class="time-inputs">
+                                        <input type="number" id="endMinutes" placeholder="Dakika" min="0" value="1">
+                                        <span>:</span>
+                                        <input type="number" id="endSeconds" placeholder="Saniye" min="0" max="59" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Frame Aralığı Seçimi -->
+                    <div class="option-card">
+                        <div class="option-header">
+                            <input type="checkbox" id="interval_enabled" checked>
+                            <h4><i class="fas fa-images"></i> Frame Aralığı</h4>
+                        </div>
+                        <p>Her kaç saniyede bir frame çıkarılacak</p>
+                        <div class="option-details">
+                            <div class="preset-values">
+                                <label><input type="checkbox" name="interval_values" value="0.1" checked> 0.1 saniye</label>
+                                <label><input type="checkbox" name="interval_values" value="0.5" checked> 0.5 saniye</label>
+                                <label><input type="checkbox" name="interval_values" value="1.0" checked> 1.0 saniye</label>
+                                <label><input type="checkbox" name="interval_values" value="2.0" checked> 2.0 saniye</label>
+                                <label><input type="checkbox" name="interval_values" value="5.0" checked> 5.0 saniye</label>
+                            </div>
+                            <div class="custom-value">
+                                <input type="number" id="custom_interval" placeholder="Özel aralık (örn: 0.3)" step="0.1" min="0.1" max="10.0">
+                                <button type="button" onclick="addCustomInterval()" class="add-btn">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="time-preview">
+                    <h4><i class="fas fa-info-circle"></i> Önizleme</h4>
+                    <p id="timePreview">Seçilen aralık: 0:00 - 1:00 (60 saniye)</p>
+                    <p id="frameCount">Tahmini frame sayısı: 120</p>
+                </div>
+            </section>
+
+            <!-- Çıktı Ayarları -->
+            <section class="output-settings" id="outputSection" style="display: none;">
+                <h3><i class="fas fa-folder-open"></i> Çıktı Ayarları</h3>
+                
+                <div class="output-settings-content">
+                    <div class="form-group">
+                        <label for="outputFolder">
+                            <i class="fas fa-folder"></i> Çıktı Klasörü Adı:
+                        </label>
+                        <input type="text" id="outputFolder" value="video_frames" placeholder="Klasör adını girin">
+                        <small class="help-text">Bu klasör adı ile çıkarılan frame'ler kaydedilecek</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="outputPath">
+                            <i class="fas fa-map-marker-alt"></i> Kayıt Konumu:
+                        </label>
+                        <div class="path-display">
+                            <span id="outputPathDisplay">C:\Users\dicle\Desktop\web-uygulama\processed\</span>
+                            <button type="button" class="path-btn" onclick="selectOutputPath()">
+                                <i class="fas fa-folder-open"></i> Klasör Seç
+                            </button>
+                        </div>
+                        <small class="help-text">Çıkarılan frame'ler bu konuma kaydedilecek</small>
+                    </div>
+
+                    <button class="process-btn" id="processBtn" onclick="processVideo()">
+                        <i class="fas fa-play"></i> Frame'leri Çıkar
+                    </button>
+                </div>
+            </section>
+
+            <!-- İşlem Durumu -->
+            <section class="status-section" id="statusSection" style="display: none;">
+                <div class="status-card">
+                    <div class="status-header">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>İşlem Devam Ediyor...</h3>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="statusMessage">Frame'ler çıkarılıyor...</p>
+                </div>
+            </section>
+
+            <!-- Sonuçlar -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-card">
+                    <div class="results-header">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>İşlem Tamamlandı!</h3>
+                    </div>
+                    <div class="results-content">
+                        <p id="resultsMessage"></p>
+                        <div class="results-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-images"></i>
+                                <span id="processedCount">0</span>
+                                <label>Çıkarılan Frame</label>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-clock"></i>
+                                <span id="timeRange">0:00-1:00</span>
+                                <label>Zaman Aralığı</label>
+                            </div>
+                        </div>
+                        <button class="download-btn" id="downloadBtn" onclick="downloadResults()">
+                            <i class="fas fa-download"></i> Sonuçları İndir
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Hata Mesajları -->
+        <div class="error-modal" id="errorModal">
+            <div class="error-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Hata</h3>
+                <p id="errorMessage"></p>
+                <button onclick="closeErrorModal()">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backend URL'i doğrudan tanımla
+        window.BACKEND_URL = 'https://resim-isleme-api.onrender.com';
+    </script>
+    <script src="video-script.js"></script>
+</body>
+</html> 

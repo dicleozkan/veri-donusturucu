@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resim İşleme - Veri Dönüştürücü</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Ana Sayfa
+                </a>
+                <h1><i class="fas fa-image"></i> Resim İşleme</h1>
+                <p>Resminizi yükleyin ve çeşitli görüntü işleme teknikleri uygulayın</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Dosya Yükleme Bölümü -->
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Resim Seçin</h3>
+                        <p>Resminizi buraya sürükleyin veya tıklayarak seçin</p>
+                        <p class="file-types">Desteklenen formatlar: PNG, JPG, JPEG, GIF, BMP</p>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open"></i> Dosya Seç
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seçilen Resim Önizleme -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <h3><i class="fas fa-eye"></i> Seçilen Resim</h3>
+                <div class="preview-container">
+                    <img id="previewImage" alt="Resim önizleme">
+                    <div class="image-info">
+                        <p id="imageInfo"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- İşlem Seçenekleri -->
+            <section class="processing-section" id="processingSection" style="display: none;">
+                <h3><i class="fas fa-cogs"></i> İşlem Seçenekleri</h3>
+                
+                <div class="options-grid">
+                    <!-- Zoom İşlemleri -->
+                    <div class="option-card">
+                        <div class="option-header">
+                            <input type="checkbox" id="zoom_enabled" checked>
+                            <h4><i class="fas fa-search-plus"></i> Zoom</h4>
+                        </div>
+                        <p>Resmi farklı oranlarda büyütme</p>
+                        <div class="option-details">
+                            <div class="preset-values">
+                                <label><input type="checkbox" name="zoom_values" value="1.2" checked> 1.2x</label>
+                                <label><input type="checkbox" name="zoom_values" value="1.5" checked> 1.5x</label>
+                                <label><input type="checkbox" name="zoom_values" value="2.0" checked> 2.0x</label>
+                            </div>
+                            <div class="custom-value">
+                                <input type="number" id="custom_zoom" placeholder="Özel zoom (örn: 1.8)" step="0.1" min="0.1" max="5.0">
+                                <button type="button" onclick="addCustomZoom()" class="add-btn">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Döndürme İşlemleri -->
+                    <div class="option-card">
+                        <div class="option-header">
+                            <input type="checkbox" id="rotation_enabled" checked>
+                            <h4><i class="fas fa-redo"></i> Döndürme</h4>
+                        </div>
+                        <p>Resmi farklı açılarda döndürme</p>
+                        <div class="option-details">
+                            <div class="preset-values">
+                                <label><input type="checkbox" name="rotation_values" value="30" checked> 30°</label>
+                                <label><input type="checkbox" name="rotation_values" value="60" checked> 60°</label>
+                                <label><input type="checkbox" name="rotation_values" value="90" checked> 90°</label>
+                                <label><input type="checkbox" name="rotation_values" value="120" checked> 120°</label>
+                                <label><input type="checkbox" name="rotation_values" value="150" checked> 150°</label>
+                                <label><input type="checkbox" name="rotation_values" value="180" checked> 180°</label>
+                                <label><input type="checkbox" name="rotation_values" value="210" checked> 210°</label>
+                                <label><input type="checkbox" name="rotation_values" value="240" checked> 240°</label>
+                                <label><input type="checkbox" name="rotation_values" value="270" checked> 270°</label>
+                                <label><input type="checkbox" name="rotation_values" value="300" checked> 300°</label>
+                                <label><input type="checkbox" name="rotation_values" value="330" checked> 330°</label>
+                                <label><input type="checkbox" name="rotation_values" value="360" checked> 360°</label>
+                            </div>
+                            <div class="custom-value">
+                                <input type="number" id="custom_rotation" placeholder="Özel açı (örn: 35)" step="1" min="0" max="360">
+                                <button type="button" onclick="addCustomRotation()" class="add-btn">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ters Çevirme İşlemleri -->
+                    <div class="option-card">
+                        <div class="option-header">
+                            <input type="checkbox" id="flip_enabled" checked>
+                            <h4><i class="fas fa-mirror"></i> Ters Çevirme</h4>
+                        </div>
+                        <p>Resmi yatay ve dikey olarak çevirme</p>
+                        <div class="option-details">
+                            <div class="preset-values">
+                                <label><input type="checkbox" name="flip_values" value="0" checked> Yatay</label>
+                                <label><input type="checkbox" name="flip_values" value="1" checked> Dikey</label>
+                                <label><input type="checkbox" name="flip_values" value="-1" checked> Her ikisi</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulanıklaştırma İşlemleri -->
+                    <div class="option-card">
+                        <div class="option-header">
+                            <input type="checkbox" id="blur_enabled" checked>
+                            <h4><i class="fas fa-blur"></i> Bulanıklaştırma</h4>
+                        </div>
+                        <p>Resmi farklı seviyelerde bulanıklaştırma</p>
+                        <div class="option-details">
+                            <div class="preset-values">
+                                <label><input type="checkbox" name="blur_values" value="5" checked> Hafif (5x5)</label>
+                                <label><input type="checkbox" name="blur_values" value="15" checked> Orta (15x15)</label>
+                                <label><input type="checkbox" name="blur_values" value="25" checked> Güçlü (25x25)</label>
+                            </div>
+                            <div class="custom-value">
+                                <input type="number" id="custom_blur" placeholder="Özel kernel (örn: 10)" step="1" min="1" max="50">
+                                <button type="button" onclick="addCustomBlur()" class="add-btn">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Veri Artırma İşlemleri -->
+                    <div class="option-card">
+                        <div class="option-header">
+                            <input type="checkbox" id="augmentation_enabled" checked>
+                            <h4><i class="fas fa-magic"></i> Veri Artırma</h4>
+                        </div>
+                        <p>Gaussian blur ile veri artırma</p>
+                        <div class="option-details">
+                            <div class="preset-values">
+                                <label><input type="checkbox" name="augmentation_values" value="5" checked> Sigma: 5</label>
+                                <label><input type="checkbox" name="augmentation_values" value="10" checked> Sigma: 10</label>
+                                <label><input type="checkbox" name="augmentation_values" value="15" checked> Sigma: 15</label>
+                            </div>
+                            <div class="custom-value">
+                                <input type="number" id="custom_augmentation" placeholder="Özel sigma (örn: 8)" step="1" min="1" max="50">
+                                <button type="button" onclick="addCustomAugmentation()" class="add-btn">Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="output-settings">
+                    <h4><i class="fas fa-folder-open"></i> Çıktı Ayarları</h4>
+                    <div class="form-group">
+                        <label for="outputFolder">
+                            <i class="fas fa-folder"></i> Çıktı Klasörü Adı:
+                        </label>
+                        <input type="text" id="outputFolder" value="processed_images" placeholder="Klasör adını girin">
+                        <small class="help-text">Bu klasör adı ile işlenen resimler kaydedilecek</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="outputPath">
+                            <i class="fas fa-map-marker-alt"></i> Kayıt Konumu:
+                        </label>
+                        <div class="path-display">
+                            <span id="outputPathDisplay">C:\Users\dicle\Desktop\web-uygulama\processed\</span>
+                            <button type="button" class="path-btn" onclick="selectOutputPath()">
+                                <i class="fas fa-folder-open"></i> Klasör Seç
+                            </button>
+                        </div>
+                        <small class="help-text">İşlenen resimler bu konuma kaydedilecek</small>
+                    </div>
+                </div>
+
+                <button class="process-btn" id="processBtn" onclick="processImage()">
+                    <i class="fas fa-play"></i> İşlemi Başlat
+                </button>
+            </section>
+
+            <!-- İşlem Durumu -->
+            <section class="status-section" id="statusSection" style="display: none;">
+                <div class="status-card">
+                    <div class="status-header">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>İşlem Devam Ediyor...</h3>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="statusMessage">Resimler işleniyor...</p>
+                </div>
+            </section>
+
+            <!-- Sonuçlar -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-card">
+                    <div class="results-header">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>İşlem Tamamlandı!</h3>
+                    </div>
+                    <div class="results-content">
+                        <p id="resultsMessage"></p>
+                        <div class="results-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-images"></i>
+                                <span id="processedCount">0</span>
+                                <label>İşlenen Resim</label>
+                            </div>
+                        </div>
+                        <button class="download-btn" id="downloadBtn" onclick="downloadResults()">
+                            <i class="fas fa-download"></i> Sonuçları İndir
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Hata Mesajları -->
+        <div class="error-modal" id="errorModal">
+            <div class="error-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Hata</h3>
+                <p id="errorMessage"></p>
+                <button onclick="closeErrorModal()">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backend URL'i doğrudan tanımla
+        window.BACKEND_URL = 'https://resim-isleme-api.onrender.com';
+    </script>
+    <script src="script.js"></script>
+</body>
+</html> 
